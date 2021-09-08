@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">MyNotes</string>
+    <string name="note1">Запись №1</string>
+    <string name="text_note1">Текст записи №1</string>
+    <string name="data_note1">01.01.2020</string>
+    <string name="note2">Запись №2</string>
+    <string name="text_note2">Текст записи №2</string>
+    <string name="data_note2">02.01.2020</string>
 </resources>
