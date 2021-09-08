@@ -6,4 +6,14 @@
     <string name="note2">Запись №2</string>
     <string name="text_note2">Текст записи №2</string>
     <string name="data_note2">02.01.2020</string>
+    <string name="action_append">Добавить</string>
+    <string name="action_to_share">Поделиться</string>
+    <string name="app_name_my">Мои заметки</string>
+    <string name="action_save">Сохранить</string>
+    <string name="action_to_change">Изменить</string>
+    <string name="app_name_fragment">Заметка</string>
+    <string name="about_the_program">О программе</string>
+    <string name="settings">Настройки</string>
+    <string name="open_drawer">Open drawer</string>
+    <string name="close_drawer">Close drawer</string>
 </resources>
