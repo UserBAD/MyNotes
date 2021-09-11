@@ -7,6 +7,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,6 +61,7 @@ public class NotesDetailsFragment extends Fragment {
 
         noteName = view.findViewById(R.id.note_name);
         noteText = view.findViewById(R.id.note_text);
+
         noteData = view.findViewById(R.id.note_data);
 
         getParentFragmentManager().setFragmentResultListener(NotesListFragment.KEY_SELECTED_NOTES, getViewLifecycleOwner(), new FragmentResultListener() {

@@ -40,21 +40,6 @@ public class MainActivity extends AppCompatActivity implements NotesListFragment
             }
         });
 
-//        Toolbar toolbarFragment = findViewById(R.id.toolbar_fragment);
-//        toolbarFragment.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem item) {
-//                if (item.getItemId() == R.id.save) {
-//                    Toast.makeText(MainActivity.this, "Сохранить", Toast.LENGTH_SHORT).show();
-//                    return true;
-//                }
-//                if (item.getItemId() == R.id.to_change) {
-//                    Toast.makeText(MainActivity.this, "Изменить", Toast.LENGTH_SHORT).show();
-//                    return true;
-//                }
-//                return false;
-//            }
-//        });
 
         Toolbar toolbarDrawer = findViewById(R.id.drawer);
         setSupportActionBar(toolbarDrawer);
