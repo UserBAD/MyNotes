@@ -3,7 +3,11 @@ package com.example.mynotes.ui.list;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -14,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.mynotes.MainActivity;
 import com.example.mynotes.R;
 import com.example.mynotes.domain.DeviceNotesRepository;
 import com.example.mynotes.domain.Notes;
@@ -35,6 +40,7 @@ public class NotesListFragment extends Fragment implements NotesListView {
     private NotesListPresenter presenter;
     private LinearLayout container;
     private OnNotesClicked onNotesClicked;
+
 
     @Override
     public void onAttach(@NonNull Context context) {

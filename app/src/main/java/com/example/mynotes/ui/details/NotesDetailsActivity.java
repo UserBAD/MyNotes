@@ -30,4 +30,5 @@ public class NotesDetailsActivity extends AppCompatActivity {
                     .commit();
         }
     }
+
 }
