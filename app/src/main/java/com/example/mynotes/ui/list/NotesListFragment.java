@@ -10,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,7 +18,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.mynotes.MainActivity;
 import com.example.mynotes.R;
 import com.example.mynotes.domain.DeviceNotesRepository;
@@ -36,9 +41,8 @@ public class NotesListFragment extends Fragment implements NotesListView {
         void onNotesOnClicked(Notes notes);
     }
 
-
     private NotesListPresenter presenter;
-    private LinearLayout container;
+    private NotesAdapter adapter = new NotesAdapter();
     private OnNotesClicked onNotesClicked;
 
 
@@ -61,6 +65,19 @@ public class NotesListFragment extends Fragment implements NotesListView {
         super.onCreate(savedInstanceState);
 
         presenter = new NotesListPresenter(this, new DeviceNotesRepository());
+
+        adapter.setListener(new NotesAdapter.OnNoteClickedListener() {
+            @Override
+            public void onNoteClicked(Notes notes) {
+                if (onNotesClicked != null) {
+                    onNotesClicked.onNotesOnClicked(notes);
+                }
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(ARG_NOTE, notes);
+                getParentFragmentManager().setFragmentResult(KEY_SELECTED_NOTES, bundle);
+
+            }
+        });
     }
 
     @Nullable
@@ -73,36 +90,18 @@ public class NotesListFragment extends Fragment implements NotesListView {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        container = view.findViewById(R.id.notes_list);
+        RecyclerView noteList = view.findViewById(R.id.notes_list);
+        noteList.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+        noteList.setAdapter(adapter);
 
         presenter.requestNotes();
-
     }
 
     @Override
     public void showNotes(List<Notes> notes) {
 
-        for (Notes note : notes) {
+        adapter.setNotes(notes);
+        adapter.notifyDataSetChanged();
 
-            View noteItem = LayoutInflater.from(requireContext()).inflate(R.layout.item_note, container, false);
-            noteItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (onNotesClicked != null) {
-                        onNotesClicked.onNotesOnClicked(note);
-                    }
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelable(ARG_NOTE, note);
-                    getParentFragmentManager().setFragmentResult(KEY_SELECTED_NOTES, bundle);
-
-                }
-            });
-
-            TextView noteName = noteItem.findViewById(R.id.note_name);
-
-            noteName.setText(note.getName());
-
-            container.addView(noteItem);
-        }
     }
 }

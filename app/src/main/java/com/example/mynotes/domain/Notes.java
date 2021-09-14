@@ -9,17 +9,20 @@ public class Notes implements Parcelable {
 
     private String name;
     private String text;
+    private final String imageUrl;
     private String data;
 
-    public Notes(String name, String text, String data) {
+    public Notes(String name, String text, String imageUrl, String data) {
         this.name = name;
         this.text = text;
+        this.imageUrl = imageUrl;
         this.data = data;
     }
 
     protected Notes(Parcel in) {
         name = in.readString();
         text = in.readString();
+        imageUrl = in.readString();
         data = in.readString();
     }
 
@@ -43,6 +46,10 @@ public class Notes implements Parcelable {
         return text;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
     public String getData() {
         return data;
     }
@@ -56,6 +63,7 @@ public class Notes implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(name);
         parcel.writeString(text);
+        parcel.writeString(imageUrl);
         parcel.writeString(data);
     }
 }

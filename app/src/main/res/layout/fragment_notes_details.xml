@@ -15,7 +15,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#660044FF"
-            app:menu="@menu/menu_fragment"
             app:title="@string/app_name_fragment" />
     </com.google.android.material.appbar.AppBarLayout>
 
