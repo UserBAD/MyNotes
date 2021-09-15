@@ -20,11 +20,15 @@ import androidx.fragment.app.FragmentResultListener;
 import com.example.mynotes.MainActivity;
 import com.example.mynotes.R;
 import com.example.mynotes.domain.Notes;
+import com.example.mynotes.ui.Router;
 import com.example.mynotes.ui.list.NotesListFragment;
+import com.example.mynotes.ui.list.RouterHolder;
 
-public class NotesDetailsFragment extends Fragment {
+public class NotesDetailsFragment extends Fragment implements RouterHolder {
 
     private static final String ARG_NOTE = "ARG_NOTE";
+
+    private Router router;
 
     public static NotesDetailsFragment newInstance(Notes notes) {
         NotesDetailsFragment fragment = new NotesDetailsFragment();
@@ -39,8 +43,7 @@ public class NotesDetailsFragment extends Fragment {
 
     private void displayNotes(Notes notes) {
         noteName.setText(notes.getName());
-        noteText.setText(notes.getText());
-        noteData.setText(notes.getData());
+
     }
 
 
@@ -51,8 +54,6 @@ public class NotesDetailsFragment extends Fragment {
     }
 
     private TextView noteName;
-    private TextView noteText;
-    private TextView noteData;
 
 
     @Override
@@ -60,9 +61,7 @@ public class NotesDetailsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         noteName = view.findViewById(R.id.note_name);
-        noteText = view.findViewById(R.id.note_text);
 
-        noteData = view.findViewById(R.id.note_data);
 
         getParentFragmentManager().setFragmentResultListener(NotesListFragment.KEY_SELECTED_NOTES, getViewLifecycleOwner(), new FragmentResultListener() {
             @Override
@@ -80,5 +79,10 @@ public class NotesDetailsFragment extends Fragment {
                 displayNotes(notes);
             }
         }
+    }
+
+    @Override
+    public Router getRouter() {
+        return router;
     }
 }

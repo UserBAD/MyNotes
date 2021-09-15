@@ -6,4 +6,12 @@ import java.util.List;
 
 public interface NotesListView {
     void showNotes(List<Notes> notes);
+
+    void showProgress();
+
+    void hideProgress();
+
+    void onNoteAdded(Notes notes);
+
+    void onNoteRemoved(Notes selectedNote);
 }
