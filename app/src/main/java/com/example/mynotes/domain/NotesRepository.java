@@ -4,6 +4,10 @@ import java.util.List;
 
 public interface NotesRepository {
 
-    List<Notes> getNotes();
+    void getNotes(Callback<List<Notes>>callback);
+
+    void addNote(String name, String imageUrl, Callback<Notes> callback);
+
+    void removeNote(Notes notes, Callback<Void> callback);
 
 }

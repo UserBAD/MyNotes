@@ -1,33 +1,28 @@
 package com.example.mynotes.ui.list;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.example.mynotes.MainActivity;
 import com.example.mynotes.R;
 import com.example.mynotes.domain.DeviceNotesRepository;
 import com.example.mynotes.domain.Notes;
-import com.example.mynotes.ui.details.NotesDetailsActivity;
+import com.example.mynotes.ui.Router;
+import com.example.mynotes.ui.edit.EditNoteFragment;
 
 import java.util.List;
 
@@ -37,13 +32,19 @@ public class NotesListFragment extends Fragment implements NotesListView {
     public static final String KEY_SELECTED_NOTES = "KEY_SELECTED_NOTES";
     public static final String ARG_NOTE = "ARG_NOTE";
 
+    private Router router;
+
     public interface OnNotesClicked {
         void onNotesOnClicked(Notes notes);
     }
 
     private NotesListPresenter presenter;
-    private NotesAdapter adapter = new NotesAdapter();
+    private NotesAdapter adapter;
     private OnNotesClicked onNotesClicked;
+    private ProgressBar progressBar;
+    private RecyclerView noteList;
+    private Notes selectedNote;
+    private boolean wasNotesRequested;
 
 
     @Override
@@ -51,6 +52,11 @@ public class NotesListFragment extends Fragment implements NotesListView {
         super.onAttach(context);
         if (context instanceof OnNotesClicked) {
             onNotesClicked = (OnNotesClicked) context;
+        }
+        if (context instanceof RouterHolder) {
+            router = ((RouterHolder) context).getRouter();
+        } else if (getParentFragment() instanceof RouterHolder) {
+            router = ((RouterHolder) getParentFragment()).getRouter();
         }
     }
 
@@ -64,7 +70,11 @@ public class NotesListFragment extends Fragment implements NotesListView {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        router = new Router(getChildFragmentManager());
+
         presenter = new NotesListPresenter(this, new DeviceNotesRepository());
+
+        adapter = new NotesAdapter(this);
 
         adapter.setListener(new NotesAdapter.OnNoteClickedListener() {
             @Override
@@ -75,7 +85,6 @@ public class NotesListFragment extends Fragment implements NotesListView {
                 Bundle bundle = new Bundle();
                 bundle.putParcelable(ARG_NOTE, notes);
                 getParentFragmentManager().setFragmentResult(KEY_SELECTED_NOTES, bundle);
-
             }
         });
     }
@@ -90,11 +99,32 @@ public class NotesListFragment extends Fragment implements NotesListView {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        RecyclerView noteList = view.findViewById(R.id.notes_list);
+        getParentFragmentManager().setFragmentResultListener(EditNoteFragment.KEY_NOTE_RESULT, getViewLifecycleOwner(), new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                Notes notes = result.getParcelable(EditNoteFragment.ARG_NOTE);
+                int index = adapter.updateNote(notes);
+                adapter.notifyItemChanged(index);
+            }
+        });
+
+        adapter.setLongClickedListener(new NotesAdapter.OnNoteLongClickedListener() {
+            @Override
+            public void onNoteLongClicked(Notes notes) {
+                selectedNote = notes;
+            }
+        });
+
+        progressBar = view.findViewById(R.id.progress);
+
+        noteList = view.findViewById(R.id.notes_list);
         noteList.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         noteList.setAdapter(adapter);
 
-        presenter.requestNotes();
+        if (!wasNotesRequested) {
+            presenter.requestNotes();
+            wasNotesRequested = true;
+        }
     }
 
     @Override
@@ -103,5 +133,54 @@ public class NotesListFragment extends Fragment implements NotesListView {
         adapter.setNotes(notes);
         adapter.notifyDataSetChanged();
 
+    }
+
+    @Override
+    public void showProgress() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgress() {
+        progressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onNoteAdded(Notes notes) {
+        adapter.addNote(notes);
+
+        adapter.notifyItemInserted(adapter.getItemCount() - 1);
+
+        noteList.smoothScrollToPosition(adapter.getItemCount() - 1);
+    }
+
+    @Override
+    public void onNoteRemoved(Notes selectedNote) {
+        int index = adapter.removeNote(selectedNote);
+        adapter.notifyItemRemoved(index);
+    }
+
+    @Override
+    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater menuInflater = requireActivity().getMenuInflater();
+        menuInflater.inflate(R.menu.menu_notes_list_context, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_delete) {
+            presenter.requestNotes(selectedNote);
+            Toast.makeText(requireContext(), "Удалить " + selectedNote.getName(), Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        if (item.getItemId() == R.id.action_update) {
+            if (router != null) {
+                router.showEditNote(selectedNote);
+            }
+            Toast.makeText(requireContext(), "Изменить " + selectedNote.getName(), Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return super.onContextItemSelected(item);
     }
 }
