@@ -36,10 +36,7 @@ public class NotesListPresenter {
             public void onSuccess(Notes data) {
                 view.hideProgress();
                 view.onNoteAdded(data);
-//                notes.add(data);
-//                view.showNotes(new ArrayList<>(notes));
             }
-
         });
     }
 

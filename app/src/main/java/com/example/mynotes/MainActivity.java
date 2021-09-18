@@ -19,15 +19,17 @@ import com.example.mynotes.ui.list.NotesListPresenter;
 import com.example.mynotes.ui.list.RouterHolder;
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.UUID;
+
 public class MainActivity extends AppCompatActivity implements NotesListFragment.OnNotesClicked {
 
     private NotesListPresenter presenter;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -35,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements NotesListFragment
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getItemId() == R.id.append) {
                     Toast.makeText(MainActivity.this, "Добавить", Toast.LENGTH_SHORT).show();
-//                    presenter.addNote(UUID.randomUUID().toString(), "https://cdn.pixabay.com/photo/2021/06/22/14/55/girl-6356393_960_720.jpg");
+                    presenter.addNote(UUID.randomUUID().toString(), "https://cdn.pixabay.com/photo/2021/06/22/14/55/girl-6356393_960_720.jpg");
                     return true;
                 }
                 if (item.getItemId() == R.id.to_share) {
@@ -76,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements NotesListFragment
                 return false;
             }
         });
-
     }
 
     @Override
@@ -89,6 +90,4 @@ public class MainActivity extends AppCompatActivity implements NotesListFragment
             startActivity(intent);
         }
     }
-
-
 }

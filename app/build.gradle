@@ -1,8 +1,17 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.gms.google-services'
 }
 
 android {
+    signingConfigs {
+        dev {
+            storeFile file('.\\..\\key2.jks')
+            keyAlias 'notes'
+            storePassword 'qwerGfhjkm1234'
+            keyPassword 'qwerGfhjkm1234'
+        }
+    }
     compileSdk 31
 
     defaultConfig {
@@ -13,12 +22,16 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug{
+            signingConfig signingConfigs.dev
         }
     }
     compileOptions {
@@ -28,7 +41,10 @@ android {
 }
 
 dependencies {
-
+    implementation "io.grpc:grpc-okhttp:1.32.2"
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
+    implementation platform('com.google.firebase:firebase-bom:28.4.0')
+    implementation 'com.google.firebase:firebase-firestore'
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.0'

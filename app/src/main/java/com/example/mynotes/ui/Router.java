@@ -4,6 +4,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.mynotes.R;
 import com.example.mynotes.domain.Notes;
+import com.example.mynotes.ui.detail.NoteDetailFragment;
 import com.example.mynotes.ui.edit.EditNoteFragment;
 
 public class Router {

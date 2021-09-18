@@ -1,6 +1,7 @@
 package com.example.mynotes.ui.list;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -26,13 +28,18 @@ import com.example.mynotes.ui.edit.EditNoteFragment;
 
 import java.util.List;
 
-public class NotesListFragment extends Fragment implements NotesListView {
+public class NotesListFragment extends Fragment implements NotesListView, RouterHolder {
 
 
     public static final String KEY_SELECTED_NOTES = "KEY_SELECTED_NOTES";
     public static final String ARG_NOTE = "ARG_NOTE";
 
     private Router router;
+
+    @Override
+    public Router getRouter() {
+        return router;
+    }
 
     public interface OnNotesClicked {
         void onNotesOnClicked(Notes notes);
@@ -45,6 +52,7 @@ public class NotesListFragment extends Fragment implements NotesListView {
     private RecyclerView noteList;
     private Notes selectedNote;
     private boolean wasNotesRequested;
+    private AlertDialog dialog;
 
 
     @Override
@@ -72,7 +80,7 @@ public class NotesListFragment extends Fragment implements NotesListView {
 
         router = new Router(getChildFragmentManager());
 
-        presenter = new NotesListPresenter(this, new DeviceNotesRepository());
+        presenter = new NotesListPresenter(this, DeviceNotesRepository.INSTANCE);
 
         adapter = new NotesAdapter(this);
 
@@ -99,6 +107,7 @@ public class NotesListFragment extends Fragment implements NotesListView {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
         getParentFragmentManager().setFragmentResultListener(EditNoteFragment.KEY_NOTE_RESULT, getViewLifecycleOwner(), new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
@@ -121,10 +130,12 @@ public class NotesListFragment extends Fragment implements NotesListView {
         noteList.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         noteList.setAdapter(adapter);
 
+
         if (!wasNotesRequested) {
             presenter.requestNotes();
             wasNotesRequested = true;
         }
+
     }
 
     @Override
@@ -170,7 +181,9 @@ public class NotesListFragment extends Fragment implements NotesListView {
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_delete) {
-            presenter.requestNotes(selectedNote);
+            showSimpleAlert();
+            dialog.show();
+
             Toast.makeText(requireContext(), "Удалить " + selectedNote.getName(), Toast.LENGTH_SHORT).show();
             return true;
         }
@@ -183,4 +196,21 @@ public class NotesListFragment extends Fragment implements NotesListView {
         }
         return super.onContextItemSelected(item);
     }
+
+    private void showSimpleAlert() {
+        dialog = new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.alert_title)
+                .setMessage(R.string.alert_message)
+                .setCancelable(false)
+                .setPositiveButton(R.string.positive, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        presenter.requestNotes(selectedNote);
+                    }
+                })
+                .setNegativeButton(R.string.negative, null)
+                .create();
+        dialog.show();
+    }
+
 }

@@ -23,4 +23,8 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="Note_detail_fragment">Note detail fragment</string>
     <string name="Save">Сохранить</string>
+    <string name="alert_title">Внимание!</string>
+    <string name="alert_message">Удалить заметку?</string>
+    <string name="positive">Да</string>
+    <string name="negative">Нет</string>
 </resources>
