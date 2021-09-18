@@ -74,7 +74,7 @@ public class Notes implements Parcelable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, imageUrl, createdAt);
+        return Objects.hash(id, name, imageUrl);
     }
 
     @Override
